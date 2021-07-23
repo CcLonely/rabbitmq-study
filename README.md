@@ -22,9 +22,7 @@
          private String messageContent; 业务消息内容 业务处理使用
          
      }
-
-
-
+     
    ##实现流程:
 
    ####提前请知晓：
