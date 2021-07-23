@@ -81,7 +81,7 @@ public class RabbitMqErrorRetryLogServiceImpl extends ServiceImpl<RabbitMqErrorR
         rabbitMqErrorRetryLog.setRetryCount(0);
         rabbitMqErrorRetryLog.setRetryStatus(false);
         rabbitMqErrorRetryLog.setVersion(0L);
-        rabbitMqErrorRetryLog.setProcessStatus(false);
+        rabbitMqErrorRetryLog.setProcessStatus(true);
         //设置队列内容
         rabbitMqErrorRetryLog.setMqExchange(message.getMessageProperties().getReceivedExchange());
         rabbitMqErrorRetryLog.setMqQueue(message.getMessageProperties().getConsumerQueue());

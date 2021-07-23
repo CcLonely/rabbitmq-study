@@ -30,7 +30,7 @@ public class RabbitMqRetry {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "0/30 * * * * ?")
     public void rabbitmq(){
 
         System.out.println("异常重试");

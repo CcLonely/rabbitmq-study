@@ -10,6 +10,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -35,23 +36,23 @@ public class RabbitMQListener {
       public void ListenerQueue(Message message) {
 
           MessageContent messageContent = new Gson().fromJson(new String(message.getBody()),MessageContent.class);
-          RLock lock = redissonClient.getLock(messageContent.getMessageId());
+          RLock lock = null;
 
           try {
+              lock = redissonClient.getLock(messageContent.getMessageId());
               boolean res = lock.tryLock(3, 60, TimeUnit.SECONDS);
               if (!res){
                 return;
               }
-              //int i = 5/0;
+              int i = 5/0;
               iRabbitMqErrorRetryLogService.asyncExecuteLog(message,true);
-          }catch (Exception e){
-              iRabbitMqErrorRetryLogService.asyncExecuteLog(message,false);
+          } catch (Exception e) {
               e.printStackTrace();
-              //手动抛出异常重试
-              throw new RuntimeException();
-          }finally {
+              //手动抛出异常重试,不抛出则会打断消费则重试
+              throw new RuntimeException("mq消息消费异常",e);
+          } finally {
               // 是否还是锁定状态
-              if(lock.isLocked()){
+              if(null != lock  && lock.isLocked()){
                   // 时候是当前执行线程的锁
                    if(lock.isHeldByCurrentThread()){
                        // 释放锁
@@ -60,6 +61,4 @@ public class RabbitMQListener {
               }
           }
       }
-
-
 }

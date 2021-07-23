@@ -2,6 +2,9 @@ package com.chen.rabbitmqconsumersbasic.config;
 
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.retry.MessageRecoverer;
+import org.springframework.amqp.rabbit.retry.RejectAndDontRequeueRecoverer;
+import org.springframework.amqp.rabbit.retry.RepublishMessageRecoverer;
 import org.springframework.amqp.support.ConsumerTagStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -42,6 +45,11 @@ public class RabbitMqConfig {
     @Bean
     public Binding bindQueueExchange(@Qualifier("bootQueue") Queue queue, @Qualifier("bootExchange") Exchange exchange){
         return BindingBuilder.bind(queue).to(exchange).with("boot.#").noargs();
+    }
+
+    @Bean
+    public MessageRecoverer messageRecoverer(){
+        return new ConsumerRejectAndDontRequeueRecoverer("测试");
     }
 
 
