@@ -48,7 +48,9 @@ public class RabbitMQListener {
               iRabbitMqErrorRetryLogService.asyncExecuteLog(message,true);
           } catch (Exception e) {
               e.printStackTrace();
-              //手动抛出异常重试,不抛出则会打断消费则重试
+              //重试并不是RabbitMQ重新发送了消息，仅仅是消费者内部进行的重试，换句话说就是重试跟mq没有任何关系；
+              //因此上述消费者代码不能添加try{}catch(){}，一旦捕获了异常，在自动ack模式下，就相当于消息正确处理了，
+              //消息直接被确认掉了，不会触发重试的；
               throw new RuntimeException("mq消息消费异常",e);
           } finally {
               // 是否还是锁定状态
